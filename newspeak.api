@@ -1,0 +1,21 @@
+syntax = "v1"
+
+type (
+	FilterRequest {
+		message string `json:"message"`
+		userId  string `json:"user_id"`
+	}
+	FilterResponse {
+		original    string   `json:"original"`
+		filtered    string   `json:"filtered"`
+		dangerLevel string   `json:"danger_level"`
+		triggers    []string `json:"triggers"`
+		note        string   `json:"note"`
+	}
+)
+
+service message-api {
+	@handler filterMessage
+	post /api/message/filter (FilterRequest) returns (FilterResponse)
+}
+
