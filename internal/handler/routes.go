@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"newspeak-chat/internal/svc"
+	"newspeak-chat/internal/ws"
 
 	"github.com/zeromicro/go-zero/rest"
 )
@@ -15,9 +16,25 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				Method:  http.MethodOptions,
+				Path:    "/api/message/filter",
+				Handler: func(w http.ResponseWriter, r *http.Request) {
+					w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+					w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+					w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Accept")
+					w.Header().Set("Access-Control-Allow-Credentials", "true")
+					w.WriteHeader(http.StatusOK)
+				},
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/api/message/filter",
 				Handler: filterMessageHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/ws",
+				Handler: ws.WsHandler,
 			},
 		},
 	)

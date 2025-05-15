@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"regexp"
 
 	"newspeak-chat/internal/svc"
 	"newspeak-chat/internal/types"
+	"newspeak-chat/internal/ws"
 
 	"github.com/tmc/langchaingo/llms"
 	"github.com/tmc/langchaingo/llms/openai"
@@ -29,7 +31,10 @@ func NewFilterMessageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Fil
 
 func (l *FilterMessageLogic) FilterMessage(req *types.FilterRequest) (resp *types.FilterResponse, err error) {
 	// 大模型定义
-	llm, err := openai.New()
+	llm, err := openai.New(
+		openai.WithBaseURL("https://api.deepseek.com/v1"),
+		openai.WithModel("deepseek-chat"),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -44,13 +49,14 @@ func (l *FilterMessageLogic) FilterMessage(req *types.FilterRequest) (resp *type
 		- Set the danger level: "low", "medium", or "high".
 		- The notes is Big Brother's warning.
 		- Return a short note.
+		- 
 
-		Respond ONLY in this exact JSON format:
+		Respond ONLY in this exact JSON format and NOT IN Markdown Format and WITHOUT any explanations or code blocks:
 
 		{
 		"original": "<original sentence>",
 		"filtered": "<rewritten sentence>",
-		"danger_level": "<low|medium|high>",
+		"danger_level": "<none|low|medium|high>",
 		"triggers": ["<list of flagged words>"],
 		"note": "<short explanation>"
 		}
@@ -65,10 +71,32 @@ func (l *FilterMessageLogic) FilterMessage(req *types.FilterRequest) (resp *type
 	}
 
 	var result types.FilterResponse
-	err = json.Unmarshal([]byte(output), &result)
+
+	fmt.Println(output)
+
+	re := regexp.MustCompile("(?s)^```(?:json)?\\s*(.*?)\\s*```$")
+	clean := re.ReplaceAllString(output, "$1")
+
+	err = json.Unmarshal([]byte(clean), &result)
 	if err != nil {
 		return nil, err
 	}
 
+	result.Note = generateNote(result.DangerLevel)
+	ws.BroadcastFilteredMessage([]byte(result.Filtered))
+
 	return &result, err
+}
+
+func generateNote(level string) string {
+	switch level {
+	case "high":
+		return "Thoughtcrime detected. Subject requires re-education."
+	case "medium":
+		return "Warning: borderline thoughtcrime. Vocabulary purification advised."
+	case "low":
+		return "Expression optimized for clarity and obedience."
+	default:
+		return "Message reviewed. Stay vigilant. Obey."
+	}
 }

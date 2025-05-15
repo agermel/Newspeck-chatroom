@@ -1,0 +1,97 @@
+body {
+    background-color: #f0f0f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#chat-container {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+    border-left: 4px solid #007bff;
+}
+
+.message-header {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.message-content {
+    margin: 5px 0;
+}
+
+.system-message {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.modified-message {
+    border-left-color: #dc3545;
+}
+
+.safe-message {
+    border-left-color: #28a745;
+}
+
+.badge-safe {
+    background-color: #28a745;
+    font-size: 0.8em;
+    margin-left: 10px;
+    color: white;
+}
+
+.badge-modified {
+    background-color: #dc3545;
+    font-size: 0.8em;
+    margin-left: 10px;
+}
+
+.thoughtcrime {
+    animation: thoughtcrime-alert 1s infinite alternate;
+    color: #dc3545;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+@keyframes thoughtcrime-alert {
+    from {
+        background-color: #dc3545;
+        color: white;
+    }
+    to {
+        background-color: #ffc107;
+        color: black;
+    }
+}
+
+#message-input:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+.message-meta {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-top: 5px;
+}
+
+.login-form {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+#username-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
