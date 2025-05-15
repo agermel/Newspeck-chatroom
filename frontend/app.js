@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Connect to WebSocket for broadcasts
-    const socket = new WebSocket('ws://localhost:8888/ws');
+    const socket = new WebSocket('wss://newspeak.thusdaykfcv50.top/ws');
     
     // Handle form submission
     messageForm.addEventListener('submit', async function(e) {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 console.log('Sending message to filter API:', message);
                 // First send to filter API
-                const filterResponse = await fetch('http://localhost:8888/api/message/filter', {
+                const filterResponse = await fetch('https://newspeak.thusdaykfcv50.top/api/message/filter', {
                     method: 'POST',
                     mode: 'cors',
                     credentials: 'same-origin',
@@ -94,8 +94,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle incoming broadcast messages
     socket.addEventListener('message', function(event) {
-        const response = JSON.parse(event.data);
-        displayMessage(response);
+        try {
+            if (typeof event.data === 'string' && event.data.trim()) {
+                const response = JSON.parse(event.data);
+                displayMessage(response);
+            } else {
+                console.warn('Received empty or non-string WebSocket message:', event.data);
+            }
+        } catch (error) {
+            console.error('Failed to parse WebSocket message:', error, 'Data:', event.data);
+            const errorMsg = document.createElement('div');
+            errorMsg.className = 'system-message error';
+            errorMsg.textContent = 'Ministry of Truth message processing error';
+            messagesContainer.appendChild(errorMsg);
+        }
     });
     
     // Display message function
