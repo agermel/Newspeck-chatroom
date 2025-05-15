@@ -96,13 +96,25 @@ document.addEventListener('DOMContentLoaded', function() {
     socket.addEventListener('message', function(event) {
         try {
             if (typeof event.data === 'string' && event.data.trim()) {
-                const response = JSON.parse(event.data);
+                let response;
+                try {
+                    // First try to parse as JSON
+                    response = JSON.parse(event.data);
+                } catch (e) {
+                    // If not JSON, treat as plain text
+                    response = {
+                        content: event.data,
+                        danger_level: 'none',
+                        modified: false,
+                        timestamp: new Date().toISOString()
+                    };
+                }
                 displayMessage(response);
             } else {
                 console.warn('Received empty or non-string WebSocket message:', event.data);
             }
         } catch (error) {
-            console.error('Failed to parse WebSocket message:', error, 'Data:', event.data);
+            console.error('Failed to process WebSocket message:', error, 'Data:', event.data);
             const errorMsg = document.createElement('div');
             errorMsg.className = 'system-message error';
             errorMsg.textContent = 'Ministry of Truth message processing error';
