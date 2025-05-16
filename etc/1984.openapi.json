@@ -1,0 +1,102 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "1984",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/api/message/filter": {
+      "post": {
+        "summary": "审查",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "message",
+                  "user_id"
+                ]
+              },
+              "example": {
+                "message": "I want to protest.",
+                "user_id": "winston"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "original": {
+                      "type": "string"
+                    },
+                    "filtered": {
+                      "type": "string"
+                    },
+                    "danger_level": {
+                      "type": "string"
+                    },
+                    "triggers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "original",
+                    "filtered",
+                    "danger_level",
+                    "triggers",
+                    "note"
+                  ]
+                },
+                "example": {
+                  "original": "I want to protest.",
+                  "filtered": "I am crimethink.",
+                  "danger_level": "high",
+                  "triggers": [
+                    "protest",
+                    "want"
+                  ],
+                  "note": "Thoughtcrime detected."
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}
